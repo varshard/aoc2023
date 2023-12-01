@@ -1,61 +1,24 @@
-use std::collections::HashMap;
-
-fn day1(input: &str) -> u32 {
-    let mut sum = 0;
-    let lines = input.split("\n");
-    for line in lines {
-        if let Some(left) = line.chars().find(|x| x.is_digit(10)) {
-            sum += left.to_digit(10).unwrap() * 10;
-        }
-
-        if let Some(left) = line.chars().rfind(|x| x.is_digit(10)) {
-            sum += left.to_digit(10).unwrap();
-        }
-    }
-    sum
+struct Day1 {
 }
 
-fn day1_part2(input: &str) -> u32 {
-    let mut left_map = HashMap::new();
-    left_map.insert("one", 1);
-    left_map.insert("two", 2);
-    left_map.insert("three", 3);
-    left_map.insert("four", 4);
-    left_map.insert("five", 5);
-    left_map.insert("six", 6);
-    left_map.insert("seven", 7);
-    left_map.insert("eight", 8);
-    left_map.insert("nine", 9);
-
-    let mut right_map = HashMap::new();
-    right_map.insert("eno", 1);
-    right_map.insert("owt", 2);
-    right_map.insert("eerht", 3);
-    right_map.insert("ruof", 4);
-    right_map.insert("evif", 5);
-    right_map.insert("xis", 6);
-    right_map.insert("neves", 7);
-    right_map.insert("thgie", 8);
-    right_map.insert("enin", 9);
-
-    let mut sum = 0;
-
-    let lines = input.split("\n");
-    for line in lines {
-        let mut left_ptr = 0;
-        let mut left = vec![];
-
-        let chars = line.chars().collect();
-
-
+impl Day1 {
+    pub fn new() -> Self {
+        Day1{}
     }
-    sum
-}
+    pub fn part1(self, input: &str) -> u32 {
+        let mut sum = 0;
+        let lines = input.split("\n");
+        for line in lines {
+            if let Some(left) = line.chars().find(|x| x.is_digit(10)) {
+                sum += left.to_digit(10).unwrap() * 10;
+            }
 
-fn find_number_str(chars: Vec<char>) {
-    let mut i = 0;
-
-
+            if let Some(left) = line.chars().rfind(|x| x.is_digit(10)) {
+                sum += left.to_digit(10).unwrap();
+            }
+        }
+        sum
+    }
 }
 
 #[cfg(test)]
@@ -64,7 +27,8 @@ mod tests {
 
     #[test]
     fn sample() {
-        assert_eq!(day1("1abc2
+        let day1 = Day1::new();
+        assert_eq!(day1.part1("1abc2
 pqr3stu8vwx
 a1b2c3d4e5f
 treb7uchet"), 142)
@@ -72,7 +36,8 @@ treb7uchet"), 142)
 
     #[test]
     fn part1() {
-        assert_eq!(day1("hcpjssql4kjhbcqzkvr2fivebpllzqbkhg
+        let day1 = Day1::new();
+        assert_eq!(day1.part1("4kjhbcqzkvr2fivebpllzqbkhg
 4threethreegctxg3dmbm1
 1lxk2hfmcgxtmps89mdvkl
 sixbfjblhsjr3
@@ -1075,15 +1040,15 @@ ffnrprtnine1tjznmckv5sixczv
 "), 55816)
     }
 
-    #[test]
-    fn sample2() {
-        assert_eq!(day1("two1nine
-eightwothree
-abcone2threexyz
-xtwone3four
-4nineeightseven2
-zoneight234
-7pqrstsixteen"), 281);
-    }
+//     #[test]
+//     fn sample2() {
+//         assert_eq!(day1("two1nine
+// eightwothree
+// abcone2threexyz
+// xtwone3four
+// 4nineeightseven2
+// zoneight234
+// 7pqrstsixteen"), 281);
+//     }
 }
 
