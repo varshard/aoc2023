@@ -17,7 +17,7 @@ impl Day2 {
             cubes
         }
     }
-    fn read_line(&self, input: String) -> Vec<HashMap<String,u32>> {
+    fn read_line(&self, input: &str) -> Vec<HashMap<String,u32>> {
         let mut result = vec![];
         let rounds = input.split(';');
 
@@ -44,12 +44,12 @@ impl Day2 {
         result
     }
 
-    fn part1_validate(&self, input: String) -> (u32, bool) {
+    fn part1_validate(&self, input: &str) -> (u32, bool) {
         let game = input.split(':').collect::<Vec<&str>>();
         let game_id = game[0].split(' ').collect::<Vec<&str>>();
         let id = game_id[1].parse::<u32>().unwrap();
 
-        let grabs = self.read_line(game[1].to_string());
+        let grabs = self.read_line(game[1]);
         for grab in grabs {
             for (c, num) in grab {
                 match self.cubes.get(&c) {
@@ -68,16 +68,35 @@ impl Day2 {
     }
 
     fn part1(&self, input: String) -> u32 {
-        let mut sum = 0;
+        input.split('\n').map(|line| self.part1_validate(line)).filter(|(_, valid)| *valid).fold(0, |sum, (id, _)| sum + id)
+    }
 
-        for line in input.split('\n') {
-            let (id, result) = self.part1_validate(line.to_string());
-            if result {
-                sum += id;
+    fn part2_line(&self, input: &str) -> u32 {
+        let mut map: HashMap<String, u32> = HashMap::new();
+
+        let game = input.split(':').collect::<Vec<&str>>();
+        let grabs = self.read_line(game[1]);
+        for grab in grabs {
+            for (c, num) in grab {
+                match map.get(&c) {
+                    None => {
+                        map.insert(c, num);
+                    }
+                    Some(count) => {
+                        if &num > count {
+                            map.insert(c, num);
+                        }
+                    }
+                }
             }
         }
 
-        sum
+        map.iter().fold(1, |power, (_,v)| power * v)
+    }
+    fn part2(&self, input: &str) -> u32 {
+        input.split('\n').map(|line| {
+            self.part2_line(line)
+        }).fold(0, |acc, x| acc + x)
     }
 }
 
@@ -88,7 +107,7 @@ mod tests {
     #[test]
     fn read_line() {
         let d = Day2::new();
-        let read = d.read_line("3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green".to_string());
+        let read = d.read_line("3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green");
 
         assert_eq!(read[0].get("blue"), Some(&3u32));
         assert_eq!(read[0].get("red"), Some(&4u32));
@@ -101,10 +120,10 @@ mod tests {
     #[test]
     fn validate_part1() {
         let d = Day2::new();
-        assert_eq!(d.part1_validate("Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green".to_string()), (1, true));
-        assert_eq!(d.part1_validate("Game 3: 8 green, 6 blue, 20 red; 5 blue, 4 red, 13 green; 5 green, 1 red".to_string()), (3, false));
+        assert_eq!(d.part1_validate("Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green"), (1, true));
+        assert_eq!(d.part1_validate("Game 3: 8 green, 6 blue, 20 red; 5 blue, 4 red, 13 green; 5 green, 1 red"), (3, false));
 
-        assert_eq!(d.part1_validate("Game 100: 3 blue, 3 red, 6 green; 7 red, 2 green, 16 blue; 14 green, 9 red, 9 blue; 8 red, 10 green, 9 blue; 6 blue, 11 red".to_string()), (100, false));
+        assert_eq!(d.part1_validate("Game 100: 3 blue, 3 red, 6 green; 7 red, 2 green, 16 blue; 14 green, 9 red, 9 blue; 8 red, 10 green, 9 blue; 6 blue, 11 red"), (100, false));
     }
 
     #[test]
@@ -121,5 +140,22 @@ Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green".to_string()), 8);
     fn part1() {
         let d = Day2::new();
         assert_eq!(d.part1(input::INPUT.to_string()), 2156);
+    }
+
+    #[test]
+    fn part2_sample() {
+        let d = Day2::new();
+        assert_eq!(d.part2("Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green"), 48);
+        assert_eq!(d.part2("Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green
+Game 2: 1 blue, 2 green; 3 green, 4 blue, 1 red; 1 green, 1 blue
+Game 3: 8 green, 6 blue, 20 red; 5 blue, 4 red, 13 green; 5 green, 1 red
+Game 4: 1 green, 3 red, 6 blue; 3 green, 6 red; 3 green, 15 blue, 14 red
+Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green"), 2286);
+    }
+
+    #[test]
+    fn part2() {
+        let d = Day2::new();
+        assert_eq!(d.part2(input::INPUT), 66909);
     }
 }
