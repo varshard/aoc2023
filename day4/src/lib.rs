@@ -123,7 +123,6 @@ fn process_copy2(cards: &HashMap<u32, u32>, mut mem: &mut HashMap<u32, u32>) {
                 None => {}
                 Some(c) => {
                     count += c;
-                    // mem.insert((i - 1) as u32,  c + mem.get(key).unwrap());
                 }
             }
         }
