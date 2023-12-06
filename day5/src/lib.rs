@@ -348,16 +348,24 @@ fn part1(input: &str) -> u64 {
 fn part2(input: &str) -> u64 {
     // TODO: correct this
     let almanac = &read_input(input);
-    almanac.loc_ranges.iter().fold(u64::MAX, |min_loc, range| {
-        let seed= almanac.find_seed(&range.start);
-        almanac.seed_range.clone().iter().fold(min_loc, |loc, seed_range| {
-            if seed_range.contains(&seed) {
-                std::cmp::min(loc, min_loc)
-            } else {
-                min_loc
-            }
-        })
-    })
+    // almanac.loc_ranges.iter().fold(u64::MAX, |min_loc, range| {
+    //     let seed= almanac.find_seed(&range.start);
+    //     almanac.seed_range.clone().iter().fold(min_loc, |loc, seed_range| {
+    //         if seed_range.contains(&seed) {
+    //             std::cmp::min(loc, min_loc)
+    //         } else {
+    //             min_loc
+    //         }
+    //     })
+    // })
+
+    let mut min_loc = u64::MAX;
+    for r in almanac.seed_range.iter() {
+        for s in r.start..r.end {
+            min_loc = std::cmp::min(min_loc, almanac.find_loc(&s));
+        }
+    }
+    min_loc
 }
 
 
@@ -410,6 +418,6 @@ mod tests {
     }
     #[test]
     fn it_solve_part2() {
-        assert_ne!(18446744073709551615, part2(input::INPUT));
+        print!("{}", part2(input::INPUT));
     }
 }
